@@ -365,7 +365,7 @@ void MainWindow::CreateHelpMenu() {
   connect(about_app, &QAction::triggered, [&] {
     QMessageBox box{ this };
     box.setTextFormat(Qt::RichText);
-    box.setText(tr("NanoBoyAdvance jest emulatorem konsoli Game Boy Advance nastawiony na jak najwyższą dokładność.<br><br>"
+    box.setText(tr("NanoBoyAdvance jest emulatorem konsoli Game Boy Advance nastawionym na jak najwyższą dokładność.<br><br>"
                    "Prawa autorskie © 2015 - 2023 fleroviux<br><br>"
                    "NanoBoyAdvance jest objęty licencją GPLv3 lub każdą kolejną jej wersją.<br><br>"
                    "GitHub: <a href=\"https://github.com/nba-emu/NanoBoyAdvance\">https://github.com/nba-emu/NanoBoyAdvance</a><br><br>"

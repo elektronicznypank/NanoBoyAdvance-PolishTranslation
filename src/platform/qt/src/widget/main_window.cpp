@@ -81,9 +81,9 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::CreateFileMenu() {
-  auto file_menu = menuBar()->addMenu(tr("File"));
+  auto file_menu = menuBar()->addMenu(tr("Plik"));
 
-  auto open_action = file_menu->addAction(tr("Open"));
+  auto open_action = file_menu->addAction(tr("Otwórz"));
   open_action->setShortcut(Qt::CTRL | Qt::Key_O);
   connect(
     open_action,
@@ -92,18 +92,18 @@ void MainWindow::CreateFileMenu() {
     &MainWindow::FileOpen
   );
 
-  recent_menu = file_menu->addMenu(tr("Recent"));
+  recent_menu = file_menu->addMenu(tr("Ostatnie"));
   RenderRecentFilesMenu();
 
   file_menu->addSeparator();
 
-  load_state_menu = file_menu->addMenu(tr("Load state"));
-  save_state_menu = file_menu->addMenu(tr("Save state"));
+  load_state_menu = file_menu->addMenu(tr("Wczytaj stan gry"));
+  save_state_menu = file_menu->addMenu(tr("Zapisz stan gry"));
   RenderSaveStateMenus();
 
   file_menu->addSeparator();
 
-  auto reset_action = file_menu->addAction(tr("Reset"));
+  auto reset_action = file_menu->addAction(tr("Zresetuj"));
   reset_action->setShortcut(Qt::CTRL | Qt::Key_R);
   connect(
     reset_action,
@@ -113,7 +113,7 @@ void MainWindow::CreateFileMenu() {
     }
   );
 
-  pause_action = file_menu->addAction(tr("Pause"));
+  pause_action = file_menu->addAction(tr("Pauza"));
   pause_action->setCheckable(true);
   pause_action->setChecked(false);
   pause_action->setShortcut(Qt::CTRL | Qt::Key_P);
@@ -126,7 +126,7 @@ void MainWindow::CreateFileMenu() {
   );
 
   connect(
-    file_menu->addAction(tr("Stop")),
+    file_menu->addAction(tr("Zatrzymaj")),
     &QAction::triggered,
     [this]() {
       Stop();
@@ -136,88 +136,88 @@ void MainWindow::CreateFileMenu() {
   file_menu->addSeparator();
 
   connect(
-    file_menu->addAction(tr("Close")),
+    file_menu->addAction(tr("Zamknij")),
     &QAction::triggered,
     &QApplication::quit
   );
 }
 
 void MainWindow::CreateVideoMenu(QMenu* parent) {
-  auto menu = parent->addMenu(tr("Video"));
+  auto menu = parent->addMenu(tr("Obraz"));
 
   auto reload_config = [this]() {
     screen->ReloadConfig();
   };
 
-  CreateSelectionOption(menu->addMenu(tr("Filter")), {
-    { "Nearest", nba::PlatformConfig::Video::Filter::Nearest },
-    { "Linear",  nba::PlatformConfig::Video::Filter::Linear  },
+  CreateSelectionOption(menu->addMenu(tr("Filtr")), {
+    { "Najbliższy-sąsiadujący", nba::PlatformConfig::Video::Filter::Nearest },
+    { "Liniowy",  nba::PlatformConfig::Video::Filter::Linear  },
     { "xBRZ",    nba::PlatformConfig::Video::Filter::xBRZ    }
   }, &config->video.filter, false, reload_config);
 
-  CreateSelectionOption(menu->addMenu(tr("Color correction")), {
-    { "None",   nba::PlatformConfig::Video::Color::No    },
+  CreateSelectionOption(menu->addMenu(tr("Korekcja kolorów")), {
+    { "Brak",   nba::PlatformConfig::Video::Color::No    },
     { "higan",  nba::PlatformConfig::Video::Color::higan },
-    { "GBA",    nba::PlatformConfig::Video::Color::AGB   }
+    { "Game Boy Advance",    nba::PlatformConfig::Video::Color::AGB   }
   }, &config->video.color, false, reload_config);
 
-  CreateBooleanOption(menu, "LCD ghosting", &config->video.lcd_ghosting, false, reload_config);
+  CreateBooleanOption(menu, "Smużenie LCD", &config->video.lcd_ghosting, false, reload_config);
 }
 
 void MainWindow::CreateAudioMenu(QMenu* parent) {
-  auto menu = parent->addMenu(tr("Audio"));
+  auto menu = parent->addMenu(tr("Dźwięk"));
 
   CreateSelectionOption(menu->addMenu("Resampler"), {
-    { "Cosine",   nba::Config::Audio::Interpolation::Cosine },
-    { "Cubic",    nba::Config::Audio::Interpolation::Cubic  },
+    { "Kosinusoidalnie",   nba::Config::Audio::Interpolation::Cosine },
+    { "Sześcienie",    nba::Config::Audio::Interpolation::Cubic  },
     { "Sinc-64",  nba::Config::Audio::Interpolation::Sinc_64  },
     { "Sinc-128", nba::Config::Audio::Interpolation::Sinc_128 },
     { "Sinc-256", nba::Config::Audio::Interpolation::Sinc_256 }
   }, &config->audio.interpolation, true);
 
-  auto hq_menu = menu->addMenu("MP2K HQ mixer");
-  CreateBooleanOption(hq_menu, "Enable", &config->audio.mp2k_hle_enable, true);
-  CreateBooleanOption(hq_menu, "Cubic interpolation", &config->audio.mp2k_hle_cubic, true);
+  auto hq_menu = menu->addMenu("MP2K HQ mikser");
+  CreateBooleanOption(hq_menu, "Włączony", &config->audio.mp2k_hle_enable, true);
+  CreateBooleanOption(hq_menu, "Sześcienna interpolacja", &config->audio.mp2k_hle_cubic, true);
 }
 
 void MainWindow::CreateInputMenu(QMenu* parent) {
-  auto menu = parent->addMenu(tr("Input"));
-  
-  auto remap_action = menu->addAction(tr("Configure"));
+  auto menu = parent->addMenu(tr("Sterowanie"));
+
+  auto remap_action = menu->addAction(tr("Skonfiguruj"));
   remap_action->setMenuRole(QAction::NoRole);
   connect(remap_action, &QAction::triggered, [this] {
     input_window->exec();
   });
 
-  CreateBooleanOption(menu, "Hold fast forward key", &config->input.hold_fast_forward);
+  CreateBooleanOption(menu, "Trzymaj przycisk przyspieszenia", &config->input.hold_fast_forward);
 }
 
 void MainWindow::CreateSystemMenu(QMenu* parent) {
   auto menu = parent->addMenu(tr("System"));
 
-  auto bios_path_action = menu->addAction(tr("Set BIOS path"));
+  auto bios_path_action = menu->addAction(tr("Ustaw ścieżkę pliku BIOS"));
   connect(bios_path_action, &QAction::triggered, [this] {
     SelectBIOS();
   });
 
-  CreateBooleanOption(menu, "Skip BIOS", &config->skip_bios);
+  CreateBooleanOption(menu, "Pomiń BIOS", &config->skip_bios);
 
   menu->addSeparator();
 
-  auto set_save_folder_action = menu->addAction(tr("Set save folder"));
+  auto set_save_folder_action = menu->addAction(tr("Ustaw folder zapisów"));
   connect(set_save_folder_action, &QAction::triggered, [this]() {
     SelectSaveFolder();
   });
 
-  auto remove_save_folder_action = menu->addAction(tr("Clear save folder"));
+  auto remove_save_folder_action = menu->addAction(tr("Wyczyść folder zapisów"));
   connect(remove_save_folder_action, &QAction::triggered, [this]() {
     RemoveSaveFolder();
   });
 
   menu->addSeparator();
 
-  CreateSelectionOption(menu->addMenu(tr("Save type")), {
-    { "Detect",      nba::Config::BackupType::Detect },
+  CreateSelectionOption(menu->addMenu(tr("Typ zapisów")), {
+    { "Wykryj",      nba::Config::BackupType::Detect },
     { "SRAM",        nba::Config::BackupType::SRAM   },
     { "FLASH 64K",   nba::Config::BackupType::FLASH_64  },
     { "FLASH 128K",  nba::Config::BackupType::FLASH_128 },
@@ -225,8 +225,8 @@ void MainWindow::CreateSystemMenu(QMenu* parent) {
     { "EEPROM 8K",   nba::Config::BackupType::EEPROM_64 }
   }, &config->cartridge.backup_type, true);
 
-  CreateBooleanOption(menu, "Force RTC", &config->cartridge.force_rtc, true);
-  CreateBooleanOption(menu, "Force solar sensor", &config->cartridge.force_solar_sensor, true);
+  CreateBooleanOption(menu, "Wymuś RTC", &config->cartridge.force_rtc, true);
+  CreateBooleanOption(menu, "Wymuś czujnik solarny", &config->cartridge.force_solar_sensor, true);
 
   menu->addSeparator();
 
@@ -234,7 +234,7 @@ void MainWindow::CreateSystemMenu(QMenu* parent) {
 }
 
 void MainWindow::CreateSolarSensorValueMenu(QMenu* parent) {
-  auto menu = parent->addMenu(tr("Solar sensor level"));
+  auto menu = parent->addMenu(tr("Poziom czujnika solarnego"));
 
   current_solar_level = menu->addAction("");
   UpdateSolarSensorLevel(); // needed to update label
@@ -253,26 +253,26 @@ void MainWindow::CreateSolarSensorValueMenu(QMenu* parent) {
 
   menu->addSeparator();
 
-  CreatePreset(tr("Low (23)"), 23);
-  CreatePreset(tr("Medium (60)"), 60);
-  CreatePreset(tr("High (99)"), 99);
-  CreatePreset(tr("Maximum (175)"), 175);
+  CreatePreset(tr("Niski (23)"), 23);
+  CreatePreset(tr("Średni (60)"), 60);
+  CreatePreset(tr("Wysoki (99)"), 99);
+  CreatePreset(tr("Maksymalny (175)"), 175);
 
   menu->addSeparator();
 
-  connect(menu->addAction(tr("Enter value...")), &QAction::triggered, [=]() {
+  connect(menu->addAction(tr("Wprowadź wartość...")), &QAction::triggered, [=]() {
     SetSolarLevel(QInputDialog::getInt(
       this,
-      tr("Solar sensor level"),
-      tr("Enter a value between 0 (lowest intensity) and 255 (highest intensity)"),
+      tr("Poziom czujnika solarnego"),
+      tr("Wprowadź wartość między 0 (najniższy poziom) a 255 (najwyższy poziom)"),
       config->cartridge.solar_sensor_level, 0, 255, 1));
   });
 }
 
 void MainWindow::CreateWindowMenu(QMenu* parent) {
-  auto menu = parent->addMenu(tr("Window"));
+  auto menu = parent->addMenu(tr("Okno"));
 
-  auto scale_menu  = menu->addMenu(tr("Scale"));
+  auto scale_menu  = menu->addMenu(tr("Skala"));
   auto scale_group = new QActionGroup{this};
 
   const auto CreateScaleAction = [&](QString const& label, int scale) {
@@ -289,7 +289,7 @@ void MainWindow::CreateWindowMenu(QMenu* parent) {
     });
   };
 
-  auto max_scale_menu = menu->addMenu(tr("Maximum scale"));
+  auto max_scale_menu = menu->addMenu(tr("Maksymalna skala"));
   auto max_scale_group = new QActionGroup{this};
 
   const auto CreateMaximumScaleAction = [&](QString const& label, int scale) {
@@ -306,7 +306,7 @@ void MainWindow::CreateWindowMenu(QMenu* parent) {
     });
   };
 
-  CreateMaximumScaleAction(tr("Unlocked"), 0);
+  CreateMaximumScaleAction(tr("Odblokowana"), 0);
 
   for(int scale = 1; scale <= 8; scale++) {
     auto label = QString::fromStdString(fmt::format("{}x", scale));
@@ -314,11 +314,11 @@ void MainWindow::CreateWindowMenu(QMenu* parent) {
     CreateScaleAction(label, scale);
     CreateMaximumScaleAction(label, scale);
   }
-  
+
   scale_menu->addActions(scale_group->actions());
   max_scale_menu->addActions(max_scale_group->actions());
 
-  fullscreen_action = menu->addAction(tr("Fullscreen"));
+  fullscreen_action = menu->addAction(tr("Pełny ekran"));
   fullscreen_action->setCheckable(true);
   fullscreen_action->setChecked(config->window.fullscreen);
 #if defined(__APPLE__)
@@ -331,25 +331,25 @@ void MainWindow::CreateWindowMenu(QMenu* parent) {
   });
 
 #if !defined(__APPLE__)
-  CreateBooleanOption(menu, "Show menu in fullscreen", &config->window.fullscreen_show_menu, false, [this]() {
+  CreateBooleanOption(menu, "Pokaż menu na pełnym ekranie", &config->window.fullscreen_show_menu, false, [this]() {
     UpdateMenuBarVisibility();
   })->setShortcut(Qt::CTRL | Qt::Key_M);
 #endif
 
-  CreateBooleanOption(menu, "Lock aspect ratio", &config->window.lock_aspect_ratio, false, [this]() {
+  CreateBooleanOption(menu, "Zablokuj współczynnik proporcji", &config->window.lock_aspect_ratio, false, [this]() {
     screen->ReloadConfig();
   });
-  CreateBooleanOption(menu, "Use integer scaling", &config->window.use_integer_scaling, false, [this]() {
+  CreateBooleanOption(menu, "Użyj skalowania całkowitego", &config->window.use_integer_scaling, false, [this]() {
     screen->ReloadConfig();
   });
 
   menu->addSeparator();
 
-  CreateBooleanOption(menu, "Show FPS", &config->window.show_fps);
+  CreateBooleanOption(menu, "Pokaż klatki na sekundę", &config->window.show_fps);
 }
 
 void MainWindow::CreateConfigMenu() {
-  auto menu = menuBar()->addMenu(tr("Config"));
+  auto menu = menuBar()->addMenu(tr("Konfiguracja"));
   CreateVideoMenu(menu);
   CreateAudioMenu(menu);
   CreateInputMenu(menu);
@@ -358,19 +358,20 @@ void MainWindow::CreateConfigMenu() {
 }
 
 void MainWindow::CreateHelpMenu() {
-  auto help_menu = menuBar()->addMenu(tr("Help"));
-  auto about_app = help_menu->addAction(tr("About NanoBoyAdvance"));
+  auto help_menu = menuBar()->addMenu(tr("Pomoc"));
+  auto about_app = help_menu->addAction(tr("O NanoBoyAdvance"));
 
   about_app->setMenuRole(QAction::AboutRole);
   connect(about_app, &QAction::triggered, [&] {
     QMessageBox box{ this };
     box.setTextFormat(Qt::RichText);
-    box.setText(tr("NanoBoyAdvance is a Game Boy Advance emulator focused on accuracy.<br><br>"
-                   "Copyright © 2015 - 2023 fleroviux<br><br>"
-                   "NanoBoyAdvance is licensed under the GPLv3 or any later version.<br><br>"
+    box.setText(tr("NanoBoyAdvance jest emulatorem konsoli Game Boy Advance nastawiony na jak najwyższą dokładność.<br><br>"
+                   "Prawa autorskie © 2015 - 2023 fleroviux<br><br>"
+                   "NanoBoyAdvance jest objęty licencją GPLv3 lub każdą kolejną jej wersją.<br><br>"
                    "GitHub: <a href=\"https://github.com/nba-emu/NanoBoyAdvance\">https://github.com/nba-emu/NanoBoyAdvance</a><br><br>"
-                   "Game Boy Advance is a registered trademark of Nintendo Co., Ltd."));
-    box.setWindowTitle(tr("About NanoBoyAdvance"));
+                   "Polska wersja - elektronicznypank: <a href=\"https://github.com/elektronicznypank/NanoBoyAdvance-PolishTranslation\">https://github.com/elektronicznypank/NanoBoyAdvance-PolishTranslation</a><br><br>"
+                   "Game Boy Advance jest zastrzeżonym znakiem towarowym Nintendo."));
+    box.setWindowTitle(tr("O NanoBoyAdvance"));
     box.exec();
   });
 }
@@ -425,11 +426,11 @@ void MainWindow::RenderSaveStateMenus() {
   save_state_menu->clear();
 
   for(int i = 1; i <= 10; i++) {
-    auto empty_state_name = QString::fromStdString(fmt::format("{:02} - (empty)", i));
+    auto empty_state_name = QString::fromStdString(fmt::format("{:02} - (pusty)", i));
 
     auto action_load = load_state_menu->addAction(empty_state_name);
     auto action_save = save_state_menu->addAction(empty_state_name);
-    
+
     action_load->setDisabled(true);
     action_save->setDisabled(true);
 
@@ -470,8 +471,8 @@ void MainWindow::RenderSaveStateMenus() {
   load_state_menu->addSeparator();
   save_state_menu->addSeparator();
 
-  auto load_file_action = load_state_menu->addAction(tr("From file..."));
-  auto save_file_action = save_state_menu->addAction(tr("To file..."));
+  auto load_file_action = load_state_menu->addAction(tr("Z pliku..."));
+  auto save_file_action = save_state_menu->addAction(tr("Do pliku..."));
 
   load_file_action->setEnabled(game_loaded);
   save_file_action->setEnabled(game_loaded);
@@ -480,7 +481,7 @@ void MainWindow::RenderSaveStateMenus() {
     QFileDialog dialog{};
     dialog.setAcceptMode(QFileDialog::AcceptOpen);
     dialog.setFileMode(QFileDialog::ExistingFile);
-    dialog.setNameFilter("NanoBoyAdvance Save State (*.nbss)");
+    dialog.setNameFilter("Zapis NanoBoyAdvance (*.nbss)");
 
     if(dialog.exec()) {
       LoadState(dialog.selectedFiles().at(0).toStdString());
@@ -491,7 +492,7 @@ void MainWindow::RenderSaveStateMenus() {
     QFileDialog dialog{};
     dialog.setAcceptMode(QFileDialog::AcceptSave);
     dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setNameFilter("NanoBoyAdvance Save State (*.nbss)");
+    dialog.setNameFilter("Zapis NanoBoyAdvance (*.nbss)");
 
     if(dialog.exec()) {
       SaveState(dialog.selectedFiles().at(0).toStdString());
@@ -505,7 +506,7 @@ void MainWindow::SelectBIOS() {
   QFileDialog dialog{this};
   dialog.setAcceptMode(QFileDialog::AcceptOpen);
   dialog.setFileMode(QFileDialog::ExistingFile);
-  dialog.setNameFilter("Game Boy Advance BIOS (*.bin)");
+  dialog.setNameFilter("Game Boy Advance - plik BIOS (*.bin)");
 
   if(dialog.exec()) {
     config->bios_path = dialog.selectedFiles().at(0).toStdString();
@@ -535,13 +536,13 @@ void MainWindow::RemoveSaveFolder() {
 void MainWindow::PromptUserForReset() {
   if(emu_thread->IsRunning()) {
     QMessageBox box {this};
-    box.setText(tr("The new configuration will apply only after reset.\n\nDo you want to reset the emulation now?"));
+    box.setText(tr("Nowa konfiguracja zostanie zastosowana po ponownym uruchomieniu emulacji.\n\nCzy chcesz to zrobić teraz?"));
     box.setIcon(QMessageBox::Question);
     box.setWindowTitle(tr("NanoBoyAdvance"));
     box.addButton(QMessageBox::No);
     box.addButton(QMessageBox::Yes);
     box.setDefaultButton(QMessageBox::No);
-    
+
     if(box.exec() == QMessageBox::Yes) {
       // Reload the ROM in case its config (e.g. save type or GPIO) has changed:
       if(game_loaded) {
@@ -606,7 +607,7 @@ void MainWindow::FileOpen() {
   QFileDialog dialog {this};
   dialog.setAcceptMode(QFileDialog::AcceptOpen);
   dialog.setFileMode(QFileDialog::ExistingFile);
-  dialog.setNameFilter("Game Boy Advance ROMs (*.gba *.agb *.zip *.rar *.7z *.tar)");
+  dialog.setNameFilter("Game Boy Advance - pliki ROMów (*.gba *.agb *.zip *.rar *.7z *.tar)");
 
   if(dialog.exec()) {
     auto file = dialog.selectedFiles().at(0).toStdString();
@@ -642,7 +643,7 @@ void MainWindow::Stop() {
     RenderSaveStateMenus();
 
     setWindowTitle("NanoBoyAdvance 1.7");
-  
+
     UpdateMenuBarVisibility();
   }
 }
@@ -686,13 +687,13 @@ void MainWindow::LoadROM(std::string path) {
     switch(nba::BIOSLoader::Load(core, config->bios_path)) {
       case nba::BIOSLoader::Result::CannotFindFile: {
         QMessageBox box {this};
-        box.setText(tr("A Game Boy Advance BIOS file is required but cannot be located.\n\nWould you like to add one now?"));
+        box.setText(tr("BIOS konsoli Game Boy Advance jest wymagany, ale nie został znaleziony.\n\nCzy chcesz dodać plik BIOSu?"));
         box.setIcon(QMessageBox::Question);
-        box.setWindowTitle(tr("BIOS not found"));
+        box.setWindowTitle(tr("Nie znaleziono pliku BIOS"));
         box.addButton(QMessageBox::No);
         box.addButton(QMessageBox::Yes);
         box.setDefaultButton(QMessageBox::Yes);
-          
+
         if(box.exec() == QMessageBox::Yes) {
           SelectBIOS();
           retry = true;
@@ -703,9 +704,9 @@ void MainWindow::LoadROM(std::string path) {
       case nba::BIOSLoader::Result::CannotOpenFile:
       case nba::BIOSLoader::Result::BadImage: {
         QMessageBox box {this};
-        box.setText(tr("Sorry, the BIOS file could not be loaded.\n\nMake sure that the BIOS image is valid and has correct file permissions."));
+        box.setText(tr("Plik BIOSu nie może być załadowany.\n\nUpewnij się, że plik BIOSu jest prawidłowy oraz posiada odpowiednie uprawnienia."));
         box.setIcon(QMessageBox::Critical);
-        box.setWindowTitle(tr("Cannot open BIOS"));
+        box.setWindowTitle(tr("Nie można otworzyć pliku BIOSu"));
         box.exec();
         return;
       }
@@ -731,9 +732,9 @@ void MainWindow::LoadROM(std::string path) {
   switch(result) {
     case nba::ROMLoader::Result::CannotFindFile: {
       QMessageBox box {this};
-      box.setText(tr("Sorry, the specified ROM file cannot be located."));
+      box.setText(tr("Nie można zlokalizować wskazanego ROMu."));
       box.setIcon(QMessageBox::Critical);
-      box.setWindowTitle(tr("ROM not found"));
+      box.setWindowTitle(tr("Nie znaleziono ROMu"));
       box.exec();
       return;
     }
@@ -741,8 +742,8 @@ void MainWindow::LoadROM(std::string path) {
     case nba::ROMLoader::Result::BadImage: {
       QMessageBox box {this};
       box.setIcon(QMessageBox::Critical);
-      box.setText(tr("Sorry, the ROM file could not be loaded.\n\nMake sure that the ROM image is valid and has correct file permissions."));
-      box.setWindowTitle(tr("Cannot open ROM"));
+      box.setText(tr("Nie można wczytać ROMu.\n\nUpewnij się, że ROM jest prawidłowy i posiada odpowiednie uprawnienia."));
+      box.setWindowTitle(tr("Nie można wczytać ROMu"));
       box.exec();
       return;
     }
@@ -780,20 +781,20 @@ auto MainWindow::LoadState(std::string const& path) -> nba::SaveStateLoader::Res
   switch(result) {
     case nba::SaveStateLoader::Result::CannotFindFile:
     case nba::SaveStateLoader::Result::CannotOpenFile: {
-      box.setText(tr("Sorry, the save state file could not be opened."));
-      box.setWindowTitle(tr("File not found"));
+      box.setText(tr("Nie można otworzyć pliku z zapisem stanu gry."));
+      box.setWindowTitle(tr("Nie znaleziono pliku"));
       box.exec();
       break;
     }
     case nba::SaveStateLoader::Result::BadImage: {
-      box.setText(tr("Sorry, this save state is corrupted and could not be loaded."));
-      box.setWindowTitle(tr("Bad save state"));
+      box.setText(tr("Wskazany zapis stanu gry jest uszkodzony i nie może zostać załadowany."));
+      box.setWindowTitle(tr("Nieprawidłowy zapis stanu gry"));
       box.exec();
       break;
     }
     case nba::SaveStateLoader::Result::UnsupportedVersion: {
-      box.setText(tr("Sorry, this save state was created with a different version of NanoBoyAdvance and could not be loaded."));
-      box.setWindowTitle(tr("Unsupported save state version"));
+      box.setText(tr("Wskazany zapis stanu gry został stworzony w innej wersji NanoBoyAdvance i nie może być załadowany."));
+      box.setWindowTitle(tr("Niewspierana wersja zapisu stanu gry"));
       box.exec();
       break;
     }
@@ -818,8 +819,8 @@ auto MainWindow::SaveState(std::string const& path) -> nba::SaveStateWriter::Res
   if(result != nba::SaveStateWriter::Result::Success) {
     QMessageBox box {this};
     box.setIcon(QMessageBox::Critical);
-    box.setText(tr("Sorry, the save state could not be written to the disk. Make sure that you have sufficient disk space and permissions."));
-    box.setWindowTitle(tr("Failed to write to the disk"));
+    box.setText(tr("Nie można zapisać stanu gry na dysk. Upewnij się, że na dysku jest odpowiednia ilość miejsca oraz że program posiada uprawnienia odpowiednie uprawnienia."));
+    box.setWindowTitle(tr("Nie udało się zapisać na dysku"));
     box.exec();
   }
 
@@ -836,7 +837,7 @@ auto MainWindow::GetSavePath(fs::path const& rom_path, fs::path const& extension
   if(
    !save_folder.empty() &&
     fs::exists(save_folder) &&
-    fs::is_directory(save_folder) 
+    fs::is_directory(save_folder)
   ) {
     return save_folder / rom_path.filename().replace_extension(extension);
   }
@@ -847,7 +848,7 @@ auto MainWindow::GetSavePath(fs::path const& rom_path, fs::path const& extension
 void MainWindow::SetKeyStatus(int channel, nba::InputDevice::Key key, bool pressed) {
   key_input[channel][int(key)] = pressed;
 
-  input_device->SetKeyStatus(key, 
+  input_device->SetKeyStatus(key,
     key_input[0][int(key)] || key_input[1][int(key)]);
 }
 
@@ -872,7 +873,7 @@ void MainWindow::UpdateWindowSize() {
     showNormal();
 
     auto scale = config->window.scale;
-    auto minimum_size = screen->minimumSize(); 
+    auto minimum_size = screen->minimumSize();
     auto maximum_size = screen->maximumSize();
     screen->setFixedSize(240 * scale, 160 * scale);
     adjustSize();
@@ -905,6 +906,6 @@ void MainWindow::UpdateSolarSensorLevel() {
 
   if(current_solar_level) {
     current_solar_level->setText(
-      QString::fromStdString(fmt::format("Current level: {} / 255", level)));
+      QString::fromStdString(fmt::format("Obecny poziom: {} / 255", level)));
   }
 }

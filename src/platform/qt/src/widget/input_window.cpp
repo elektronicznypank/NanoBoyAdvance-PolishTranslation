@@ -25,7 +25,7 @@ InputWindow::InputWindow(
   app->installEventFilter(this);
 
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-  setWindowTitle("Input Config");
+  setWindowTitle("Konfiguracja sterowania");
 }
 
 bool InputWindow::eventFilter(QObject* obj, QEvent* event) {
@@ -73,7 +73,7 @@ auto InputWindow::CreateGameControllerList() -> QLayout* {
 
   controller_combo_box = new QComboBox();
 
-  auto label = new QLabel{"Game Controller:"};
+  auto label = new QLabel{"Kontroler:"};
   hbox->addWidget(label);
   hbox->addWidget(controller_combo_box);
 
@@ -93,7 +93,7 @@ void InputWindow::UpdateGameControllerList() {
 
   controller_combo_box->clear();
 
-  controller_combo_box->addItem("(none)", "");
+  controller_combo_box->addItem("Brak", "");
   controller_combo_box->setCurrentIndex(0);
 
   for(int i = 0; i < joystick_count; i++) {
@@ -112,8 +112,8 @@ void InputWindow::UpdateGameControllerList() {
 auto InputWindow::CreateKeyMapTable() -> QLayout* {
   auto grid = new QGridLayout{};
 
-  grid->addWidget(new QLabel{tr("Keyboard")}, 0, 1);
-  grid->addWidget(new QLabel{tr("Game Controller")}, 0, 2);
+  grid->addWidget(new QLabel{tr("Klawiatura")}, 0, 1);
+  grid->addWidget(new QLabel{tr("Kontroler")}, 0, 2);
 
   CreateKeyMapEntry(grid, "A", &config->input.gba[int(Key::A)]);
   CreateKeyMapEntry(grid, "B", &config->input.gba[int(Key::B)]);
@@ -121,11 +121,11 @@ auto InputWindow::CreateKeyMapTable() -> QLayout* {
   CreateKeyMapEntry(grid, "R", &config->input.gba[int(Key::R)]);
   CreateKeyMapEntry(grid, "Start", &config->input.gba[int(Key::Start)]);
   CreateKeyMapEntry(grid, "Select", &config->input.gba[int(Key::Select)]);
-  CreateKeyMapEntry(grid, "Up", &config->input.gba[int(Key::Up)]);
-  CreateKeyMapEntry(grid, "Down", &config->input.gba[int(Key::Down)]);
-  CreateKeyMapEntry(grid, "Left", &config->input.gba[int(Key::Left)]);
-  CreateKeyMapEntry(grid, "Right", &config->input.gba[int(Key::Right)]);
-  CreateKeyMapEntry(grid, "Fast Forward", &config->input.fast_forward);
+  CreateKeyMapEntry(grid, "Góra", &config->input.gba[int(Key::Up)]);
+  CreateKeyMapEntry(grid, "Dół", &config->input.gba[int(Key::Down)]);
+  CreateKeyMapEntry(grid, "Lewo", &config->input.gba[int(Key::Left)]);
+  CreateKeyMapEntry(grid, "Prawo", &config->input.gba[int(Key::Right)]);
+  CreateKeyMapEntry(grid, "Przyspieszenie", &config->input.fast_forward);
   return grid;
 }
 
@@ -143,24 +143,24 @@ void InputWindow::CreateKeyMapEntry(
 
   {
     button_keyboard = new QPushButton{GetKeyboardButtonName(mapping->keyboard)};
-   
+
     connect(button_keyboard, &QPushButton::clicked, [=]() {
       RestoreActiveButtonLabel();
-      button_keyboard->setText("[press key]");
+      button_keyboard->setText("[wciśnij klawisz]");
       active_mapping = mapping;
       active_button = button_keyboard;
       waiting_for_keyboard = true;
     });
-    
+
     layout->addWidget(button_keyboard, row, 1);
   }
 
   {
     button_controller = new QPushButton{GetControllerButtonName(mapping)};
-    
+
     connect(button_controller, &QPushButton::clicked, [=]() {
       RestoreActiveButtonLabel();
-      button_controller->setText("[press button]");
+      button_controller->setText("[wciśnij przycisk]");
       active_mapping = mapping;
       active_button = button_controller;
       waiting_for_controller = true;
@@ -170,7 +170,7 @@ void InputWindow::CreateKeyMapEntry(
   }
 
   {
-    auto button = new QPushButton{tr("Clear")};
+    auto button = new QPushButton{tr("Wyczyść")};
 
     connect(button, &QPushButton::clicked, [=]() {
       if(active_mapping == mapping) {
@@ -193,7 +193,7 @@ void InputWindow::RestoreActiveButtonLabel() {
     active_button->setText(GetKeyboardButtonName(active_mapping->keyboard));
     waiting_for_keyboard = false;
   }
-  
+
   if(waiting_for_controller) {
     active_button->setText(GetControllerButtonName(active_mapping));
     waiting_for_controller = false;
@@ -202,7 +202,7 @@ void InputWindow::RestoreActiveButtonLabel() {
 
 auto InputWindow::GetKeyboardButtonName(int key) -> QString {
   if(key == 0) {
-    return "None";
+    return "Brak";
   }
   return QKeySequence{key}.toString();
 }
@@ -226,5 +226,5 @@ auto InputWindow::GetControllerButtonName(QtConfig::Input::Map* mapping) -> QStr
     return QString::asprintf("%s%c", axis_name, axis_pole);
   }
 
-  return "None";
+  return "Brak";
 }

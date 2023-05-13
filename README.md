@@ -7,7 +7,15 @@ NanoBoyAdvance is a cycle-accurate Game Boy Advance emulator.<br>
 It aims to be as accurate as possible, while also offering enhancements such as
 improved audio quality.<br>
 
+English version:
+
 ![screenshot1](docs/screenshot.png)
+
+Polish version:
+
+![screenshot2](docs/screenshot2.png)
+
+![screenshot3](docs/screenshot3.png)
 
 ## Features
 - Very high compatibility and accuracy (see [Accuracy](#accuracy))
